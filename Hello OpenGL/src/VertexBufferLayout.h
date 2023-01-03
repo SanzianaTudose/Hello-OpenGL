@@ -7,7 +7,6 @@
 
 #include "Renderer.h"
 
-
 struct VertexBufferElement {
 	unsigned int type;
 	unsigned int count;
