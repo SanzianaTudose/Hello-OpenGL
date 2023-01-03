@@ -12,6 +12,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
+#include "Texture.h"
 
 int main(void)
 {
@@ -42,27 +43,36 @@ int main(void)
     
     GLCall(std::cout << glGetString(GL_VERSION) << std::endl);
     {
+        GLCall(glEnable(GL_BLEND));
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); // Specify how to blend alpha
+
         float positions[] = {
-            -0.5f, -0.5f,
-             0.5f,  -0.5f,
-             0.5f, 0.5f,
-             -0.5f, 0.5f,
+            -0.5f, -0.5f, 0.0f, 0.0f,
+             0.5f,  -0.5f, 1.0f, 0.0f,
+             0.5f, 0.5f, 1.0f, 1.0f,
+             -0.5f, 0.5f, 0.0f, 1.0f
         };
         unsigned int indices[] = {
             0, 1, 2,
             2, 3, 0
         };
-        VertexBuffer vb(positions, 4 * 2 * sizeof(float));
 
+        VertexArray va;
+        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
         VertexBufferLayout layout;
         layout.Push<float>(2);
-        
-        VertexArray va;
+        layout.Push<float>(2);
         va.AddBuffer(vb, layout);
         
         IndexBuffer ib(indices, 6);
 
         Shader shader("res/shaders/Basic.shader");
+
+        Texture texture("res/textures/OpenGL-logo.png");
+        texture.Bind();
+
+        shader.Bind();
+        shader.SetUniform1i("u_Texture", 0);
 
         Renderer renderer;
         
