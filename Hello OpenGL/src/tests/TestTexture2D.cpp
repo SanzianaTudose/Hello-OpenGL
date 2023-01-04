@@ -22,6 +22,7 @@ namespace test
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
         // Vertex data set-up
+        // posX, posY, texX, texY
         float vertexData[] = {
             -50.0f, -50.0f, 0.0f, 0.0f,
              50.0f, -50.0f, 1.0f, 0.0f,
@@ -37,8 +38,8 @@ namespace test
         m_VAO = std::make_unique<VertexArray>();
         m_VBO = std::make_unique<VertexBuffer>(vertexData, 4 * 4 * sizeof(float));
         VertexBufferLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(2);
+        layout.Push<float>(2); // Position element (posX, posY)
+        layout.Push<float>(2); // Texture coord element (texX, texY)
         m_VAO->AddBuffer(*m_VBO, layout);
 
         // Index Buffer
