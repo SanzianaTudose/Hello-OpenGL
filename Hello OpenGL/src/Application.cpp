@@ -53,10 +53,10 @@ int main(void)
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); // Specify how to blend alpha
 
         float vertexData[] = {
-            -0.5f, -0.5f, 0.0f, 0.0f,
-             0.5f,  -0.5f, 1.0f, 0.0f,
-             0.5f, 0.5f, 1.0f, 1.0f,
-             -0.5f, 0.5f, 0.0f, 1.0f
+            -50.0f, -50.0f, 0.0f, 0.0f,
+             50.0f, -50.0f, 1.0f, 0.0f,
+             50.0f,  50.0f, 1.0f, 1.0f,
+            -50.0f,  50.0f, 0.0f, 1.0f
         };
         unsigned int indices[] = {
             0, 1, 2,
@@ -73,7 +73,7 @@ int main(void)
         IndexBuffer ib(indices, 6);
 
         // Model View Projection Matrices
-        glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -2.0f, 2.0f, -1.0f, 1.0f);
+        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); // View Matrix = camera position
 
         Shader shader("res/shaders/Basic.shader");
@@ -91,24 +91,32 @@ int main(void)
         ImGui_ImplGlfwGL3_Init(window, true);
         ImGui::StyleColorsDark(); 
         
-        glm::vec3 translation(0.0f, 0.0f, 0.0f);
+        glm::vec3 translationA(960.0f / 2.0f, 540.0f / 2.0f, 0.0f);
+        glm::vec3 translationB(960.0f / 2.0f, 540.0f / 1.3f, 0.0f);
         float r = 0.0f;
         float rIncrement = 0.005f;
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
-            /* Render here */
             renderer.Clear();
-
             ImGui_ImplGlfwGL3_NewFrame();
             
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation); // Model Matrix = model transform (Translation/Rotation/Scale)
-            glm::mat4 mvp = proj * view * model;
-
-            shader.Bind();
-            shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-            shader.SetUniformMat4f("u_MVP", mvp);
-
-            renderer.Draw(va, ib, shader);
+            // Draw 1st element
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA); // Model Matrix = model transform (Translation/Rotation/Scale)
+                glm::mat4 mvp = proj * view * model;
+                shader.Bind();
+                shader.SetUniformMat4f("u_MVP", mvp);
+                renderer.Draw(va, ib, shader); 
+            }
+            
+            // Draw 2nd element
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB); // Model Matrix = model transform (Translation/Rotation/Scale)
+                glm::mat4 mvp = proj * view * model;
+                shader.Bind();
+                shader.SetUniformMat4f("u_MVP", mvp);
+                renderer.Draw(va, ib, shader); 
+            }
 
             if (r > 1.0f)
                 rIncrement *= (-1.0f);
@@ -119,7 +127,8 @@ int main(void)
 
             // Render ImGui Debug Window
             {
-                ImGui::SliderFloat3("Translation", &translation.x, -1.0f, 1.0f); 
+                ImGui::SliderFloat3("Translation A", &translationA.x, 0.0f, 960.0f);
+                ImGui::SliderFloat3("Translation B", &translationB.x, 0.0f, 960.0f);
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             }
 
