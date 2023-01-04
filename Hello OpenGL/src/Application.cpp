@@ -74,7 +74,7 @@ int main(void)
             renderer.Clear();
 
             ImGui_ImplGlfwGL3_NewFrame();
-            
+
             if (curTest) {
                 curTest->OnUpdate(0.0f);
                 curTest->OnRender();
@@ -96,6 +96,10 @@ int main(void)
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
+
+        if (curTest != testMenu)
+            delete testMenu;
+        delete curTest;
     }
 
     ImGui_ImplGlfwGL3_Shutdown();

@@ -18,6 +18,7 @@ namespace test {
 		virtual void OnImGuiRender() {}
 	};
 
+	// TODO: Move curTest handling from Application.cpp to TestMenu class
 	class TestMenu : public Test 
 	{
 	public:
