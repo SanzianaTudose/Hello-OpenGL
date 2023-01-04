@@ -69,7 +69,11 @@ int main(void)
         
         IndexBuffer ib(indices, 6);
 
+        // Model View Projection Matrices
         glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -2.0f, 2.0f, -1.0f, 1.0f);
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f)); // View Matrix = camera position
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 0.0f)); // Model Matrix = model transform (Translation/Rotation/Scale)
+        glm::mat4 mvp = proj * view * model;
 
         Shader shader("res/shaders/Basic.shader");
 
@@ -78,7 +82,7 @@ int main(void)
 
         shader.Bind();
         shader.SetUniform1i("u_Texture", 0);
-        shader.SetUniformMat4f("u_MVP", proj);
+        shader.SetUniformMat4f("u_MVP", mvp);
 
         Renderer renderer;
         
