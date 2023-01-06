@@ -12,9 +12,9 @@ namespace test
 {
 
 	TestTexture2D::TestTexture2D() 
-        : m_TranslationA(960.0f / 2.0f, 540.0f / 2.0f, 0.0f),
-          m_TranslationB(960.0f / 2.0f, 540.0f / 1.3f, 0.0f),
-          m_Proj(glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f)),
+        : m_TranslationA(800.0f / 2.0f, 600.0f / 2.0f, 0.0f),
+          m_TranslationB(800.0f / 2.0f, 600.0f / 1.3f, 0.0f),
+          m_Proj(glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f)),
           m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)))
     {
         // Enable alpha blending and specify behavior
@@ -87,8 +87,8 @@ namespace test
 	}
 
 	void TestTexture2D::OnImGuiRender() {
-        ImGui::SliderFloat3("Translation A", &m_TranslationA.x, 0.0f, 960.0f);
-        ImGui::SliderFloat3("Translation B", &m_TranslationB.x, 0.0f, 960.0f);
+        ImGui::SliderFloat3("Translation A", &m_TranslationA.x, 0.0f, 600.0f);
+        ImGui::SliderFloat3("Translation B", &m_TranslationB.x, 0.0f, 600.0f);
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	}
 
