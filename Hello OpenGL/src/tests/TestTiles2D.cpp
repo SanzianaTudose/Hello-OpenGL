@@ -11,6 +11,8 @@
 
 namespace test 
 {
+    // TODO: Make {_gridSize} dynamic 
+
     const float WINDOW_WIDTH = 800.0f, WINDOW_HEIGHT = 600.0f; // BAD PRACTICE! this is already set in Application.cpp
     const unsigned int MAX_SIZE = 10;
 
@@ -30,30 +32,28 @@ namespace test
     TestTiles2D::TestTiles2D() :
           _proj(glm::ortho(0.0f, WINDOW_WIDTH, 0.0f, WINDOW_HEIGHT, -1.0f, 1.0f)),
           _view(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f))),
-          _gridSize(3),
-          _gridTranslate(glm::vec3(0.0f, 0.0f, 0.0f))
+          _gridSize(3), _gridOrigin(glm::vec3(0.0f, 0.0f, 0.0f)),
+          _tileSize(10.0f), _tileSpacing(10.0f)
     {
         // Enable alpha blending and specify behavior
         GLCall(glEnable(GL_BLEND));
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
         // Index data set-up for _gridSize * _gridSize quads
-        // TODO: Make indices depend on {_gridSize} 
-        const unsigned int quadCount = _gridSize * _gridSize;
-
-        unsigned int indices[6 * MAX_SIZE * MAX_SIZE]; // Allocate maximum number of vertices
-        SetUpIndexBufferQuads(quadCount, indices);
+        const unsigned int maxQuadCount = MAX_SIZE * MAX_SIZE;
+        unsigned int indices[6 * maxQuadCount]; // Allocate maximum number of vertices
+        SetUpIndexBufferQuads(maxQuadCount, indices);
        
         // Vertex Array & Vertex Buffer
         _VAO = std::make_unique<VertexArray>();
-        _VBO = std::make_unique<VertexBuffer>(nullptr, 4 * quadCount * sizeof(Vertex), GL_DYNAMIC_DRAW);
+        _VBO = std::make_unique<VertexBuffer>(nullptr, 4 * maxQuadCount * sizeof(Vertex), GL_DYNAMIC_DRAW);
         VertexBufferLayout layout;
         layout.Push<float>(3); // Position element (X, Y, Z)
         layout.Push<float>(4); // Color element (R, G, B, alpha)
         _VAO->AddBuffer(*_VBO, layout);
 
         // Index Buffer
-        _IBO = std::make_unique<IndexBuffer>(indices, quadCount * 6);
+        _IBO = std::make_unique<IndexBuffer>(indices, maxQuadCount * 6);
         IndexBuffer ib();
 
         // Shader
@@ -87,19 +87,19 @@ namespace test
    }
     
     // Create vertex data for a square tile grid
-    static void CreateGridData(unsigned int gridSize, glm::vec3 origin, Vertex vertexData[]) {
-        const float offset = 10.0f;
-        const float quadSize = 50.0f;
+    void TestTiles2D::CreateGridData(Vertex vertexData[]) {
+        const float spacing = _tileSpacing;
+        const float quadSize = _tileSize;
         
         unsigned int dataOffset = 0;
-        for (int i = 0; i < gridSize; i++)
-        for (int j = 0; j < gridSize; j++) {
-            float rowsBelow = gridSize - i - 1;
-            float colsRight = gridSize - j - 1;
-            float totalXOffset = (rowsBelow * quadSize) + (rowsBelow * offset);
-            float totalYOffset = (colsRight * quadSize) + (colsRight * offset);
+        for (int i = 0; i < _gridSize; i++)
+        for (int j = 0; j < _gridSize; j++) {
+            float rowsBelow = _gridSize - i - 1;
+            float colsRight = _gridSize - j - 1;
+            float totalXOffset = (rowsBelow * quadSize) + (rowsBelow * spacing);
+            float totalYOffset = (colsRight * quadSize) + (colsRight * spacing);
 
-            auto quad = CreateQuad(origin.x + totalXOffset, origin.y + totalYOffset, quadSize);
+            auto quad = CreateQuad(_gridOrigin.x + totalXOffset, _gridOrigin.y + totalYOffset, quadSize);
             memcpy(vertexData + dataOffset, quad.data(), quad.size() * sizeof(Vertex));
 
             dataOffset += quad.size();
@@ -111,8 +111,8 @@ namespace test
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
         // Set-up dynamic Vertex Buffer
-        Vertex vertexData[4 * 3 * 3];
-        CreateGridData(_gridSize, glm::vec3(0.0f, 0.0f, 0.0f), vertexData);
+        Vertex vertexData[4 * MAX_SIZE * MAX_SIZE];
+        CreateGridData(vertexData);
             
         _VBO->Bind();
         _VBO->AddData(0, sizeof(vertexData), vertexData);
@@ -123,7 +123,7 @@ namespace test
 
         // Batch draw grid
         {
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), _gridTranslate); // Model Matrix = model transform (Translation/Rotation/Scale)
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), _gridOrigin); // Model Matrix = model transform (Translation/Rotation/Scale)
             glm::mat4 mvp = _proj * _view * model;
             _shader->Bind();
             _shader->SetUniformMat4f("u_MVP", mvp);
@@ -133,7 +133,11 @@ namespace test
 	}
 
 	void TestTiles2D::OnImGuiRender() {
-        ImGui::SliderFloat3("Grid Translate", &_gridTranslate.x, -800.0f, 800.0f);
+        ImGui::SliderFloat3("Grid Translate", &_gridOrigin.x, 0.0f, 300.0f);
+        ImGui::SliderInt("Grid Size", &_gridSize, 0, 10);
+
+        ImGui::SliderFloat("Tile Size", &_tileSize, 10.0f, 100.0f);
+        ImGui::SliderFloat("Tile Spacing", &_tileSpacing, 0.0f, 30.0f);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	}

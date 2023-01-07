@@ -36,8 +36,11 @@ namespace test
 		glm::mat4 _proj, _view; // View Projection Matrices
 
 		// Grid properties
-		unsigned int _gridSize;
-		glm::vec3 _gridTranslate;
+		int _gridSize;
+		float _tileSize;
+		float _tileSpacing;
+		glm::vec3 _gridOrigin;
 
+		void CreateGridData(Vertex vertexData[]);
 	};
 }
