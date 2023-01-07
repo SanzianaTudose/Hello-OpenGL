@@ -8,10 +8,11 @@
 
 #include <memory>
 
-// Simple render of a 2D tile grid 
+// Simple render of a 2D tile grid (so one wall of a 3D room)
 
 namespace test 
 {
+	// TODO: Use glm to make these arrays assignable
 	struct Vertex {
 		float Position[3];
 		float Color[4];
@@ -37,6 +38,6 @@ namespace test
 
 		// Grid properties
 		unsigned int _size;
-		glm::vec3 _gridTopLeft;
+		glm::vec3 _gridTranslate;
 	};
 }

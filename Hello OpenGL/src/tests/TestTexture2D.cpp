@@ -36,7 +36,7 @@ namespace test
        
         // Vertex Array & Vertex Buffer
         m_VAO = std::make_unique<VertexArray>();
-        m_VBO = std::make_unique<VertexBuffer>(vertexData, 4 * 4 * sizeof(float));
+        m_VBO = std::make_unique<VertexBuffer>(vertexData, 4 * 4 * sizeof(float), GL_STATIC_DRAW);
         VertexBufferLayout layout;
         layout.Push<float>(2); // Position element (posX, posY)
         layout.Push<float>(2); // Texture coord element (texX, texY)

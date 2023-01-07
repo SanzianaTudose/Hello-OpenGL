@@ -24,6 +24,8 @@
 #include "tests/TestTexture2D.h"
 #include "tests/TestTiles2D.h"
 
+const unsigned int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
+
 int main(void)
 {
     GLFWwindow* window;
@@ -37,7 +39,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(800, 600, "Hello OpenGL", NULL, NULL);
+    window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello OpenGL", NULL, NULL);
     if (!window) {
         glfwTerminate();
         return -1;
