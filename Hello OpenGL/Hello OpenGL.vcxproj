@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\render util\Camera.cpp" />
     <ClCompile Include="src\render util\Shader.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\render util\IndexBuffer.cpp" />
@@ -299,6 +300,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="src\render util\Camera.h" />
     <ClInclude Include="src\render util\Shader.h" />
     <ClInclude Include="src\render util\IndexBuffer.h" />
     <ClInclude Include="src\render util\Renderer.h" />

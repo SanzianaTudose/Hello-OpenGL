@@ -6,6 +6,8 @@
 #include "VertexBufferLayout.h"
 #include "Texture.h"
 
+
+#include "Camera.h"
 #include <memory>
 
 // Simple render of a square 2D tile grid (so one wall of a 3D room)
@@ -32,6 +34,7 @@ namespace test
 		std::unique_ptr<VertexBuffer> _VBO;
 		std::unique_ptr<IndexBuffer> _IBO;
 		std::unique_ptr<Shader> _shader;
+		std::unique_ptr<Camera> _camera;
 
 		glm::mat4 _proj, _view; // View Projection Matrices
 

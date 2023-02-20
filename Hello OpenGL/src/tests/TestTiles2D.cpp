@@ -57,6 +57,9 @@ namespace test
         // Shader
         _shader = std::make_unique<Shader>("res/shaders/Tile.shader");
         _shader->Bind();
+
+        // Camera
+        _camera = std::make_unique<Camera>(WINDOW_WIDTH, WINDOW_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
 	}
 	
 	TestTiles2D::~TestTiles2D() {}
@@ -130,6 +133,9 @@ namespace test
             _shader->Bind();
             _shader->SetUniformMat4f("u_MVP", mvp);
 
+            _camera->Matrix(70.0f, 0.1f, 100.0f, _shader, "u_MVP");
+            _camera->Inputs(glfwGetCurrentContext());
+
             renderer.Draw(*_VAO, *_IBO, *_shader);
         }
 	}
@@ -144,5 +150,5 @@ namespace test
         ImGui::SliderFloat("Tile Spacing", &_tileSpacing, 0.0f, 30.0f);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	}
+    }
 }
