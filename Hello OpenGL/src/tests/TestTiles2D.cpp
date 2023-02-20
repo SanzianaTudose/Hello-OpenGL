@@ -11,9 +11,7 @@
 
 namespace test 
 {
-    // TODO: Make {_gridSize} dynamic 
-
-    const float WINDOW_WIDTH = 800.0f, WINDOW_HEIGHT = 600.0f; // BAD PRACTICE! this is already set in Application.cpp
+    const float WINDOW_WIDTH = 640.0f, WINDOW_HEIGHT = 480.0f; // BAD PRACTICE! this is already set in Application.cpp
     const unsigned int MAX_SIZE = 10;
 
     static void SetUpIndexBufferQuads(unsigned int quadCount, unsigned int indices[]) {
@@ -30,9 +28,9 @@ namespace test
     }
 
     TestTiles2D::TestTiles2D() :
-          _proj(glm::ortho(0.0f, WINDOW_WIDTH, 0.0f, WINDOW_HEIGHT, -1.0f, 1.0f)),
+          _proj(glm::perspective(90.0f, WINDOW_WIDTH / WINDOW_HEIGHT, 0.1f, 100.0f)),
           _view(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f))),
-          _gridSize(3), _gridOrigin(glm::vec3(0.0f, 0.0f, 0.0f)),
+          _gridSize(3), _gridOrigin(glm::vec3(0.0f, 0.0f, 5.0f)),
           _tileSize(10.0f), _tileSpacing(10.0f)
     {
         // Enable alpha blending and specify behavior
@@ -63,25 +61,27 @@ namespace test
 	
 	TestTiles2D::~TestTiles2D() {}
 
-    // Return vertices array for a quad with bottom right corner in (x,y)
-    static std::array<Vertex, 4> CreateQuad(float x, float y, float quadSize) {
+    // Return vertices array for a quad with bottom left corner in (x,y)
+    static std::array<Vertex, 4> CreateQuad(float x, float y, float z, float quadSize) {
        float size = quadSize;
 
+       glm::vec4 color = glm::vec4(0.55f, 0.37f, 0.75f, 1.0f);
+
        Vertex v0;
-       v0.position = { x, y, 0.0f };
-       v0.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+       v0.position = { x, y, z };
+       v0.color = color;
 
        Vertex v1;
-       v1.position = { x + size, y, 0.0f };
-       v1.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+       v1.position = { x + size, y, z };
+       v1.color = color;
 
        Vertex v2;
-       v2.position = { x + size,  y + size, 0.0f };
-       v2.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+       v2.position = { x + size,  y + size, z };
+       v2.color = color;
        
        Vertex v3;
-       v3.position = { x, y + size, 0.0f };
-       v3.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+       v3.position = { x, y + size, z };
+       v3.color = color;
 
        return { v0, v1, v2, v3 };
    }
@@ -99,7 +99,7 @@ namespace test
             float totalXOffset = (rowsBelow * quadSize) + (rowsBelow * spacing);
             float totalYOffset = (colsRight * quadSize) + (colsRight * spacing);
 
-            auto quad = CreateQuad(_gridOrigin.x + totalXOffset, _gridOrigin.y + totalYOffset, quadSize);
+            auto quad = CreateQuad(_gridOrigin.x + totalXOffset, _gridOrigin.y + totalYOffset, _gridOrigin.z, quadSize);
             memcpy(vertexData + dataOffset, quad.data(), quad.size() * sizeof(Vertex));
 
             dataOffset += quad.size();
@@ -123,7 +123,9 @@ namespace test
 
         // Batch draw grid
         {
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), _gridOrigin); // Model Matrix = model transform (Translation/Rotation/Scale)
+            glm::mat4 model(1.0f); // Model Matrix = model transform (Translation/Rotation/Scale)
+            model = glm::scale(model, glm::vec3(0.1f, 0.1f, -1.0f)); // not sure yet why this is necessary
+            model = glm::rotate(model, glm::radians(_degrees), glm::vec3(0.0f, 1.0f, 0.0f));
             glm::mat4 mvp = _proj * _view * model;
             _shader->Bind();
             _shader->SetUniformMat4f("u_MVP", mvp);
@@ -133,7 +135,9 @@ namespace test
 	}
 
 	void TestTiles2D::OnImGuiRender() {
-        ImGui::SliderFloat3("Grid Translate", &_gridOrigin.x, 0.0f, 300.0f);
+        ImGui::SliderFloat3("Grid Translate", &_gridOrigin.x, -1.0f, 300.0f);
+        ImGui::SliderFloat("Z", &_gridOrigin.z, -10.0f, 15.0f);
+        ImGui::SliderFloat("Rotation", &_degrees, -1.0f, 1.0f);
         ImGui::SliderInt("Grid Size", &_gridSize, 0, 10);
 
         ImGui::SliderFloat("Tile Size", &_tileSize, 10.0f, 100.0f);

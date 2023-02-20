@@ -37,9 +37,10 @@ namespace test
 
 		// Grid properties
 		int _gridSize;
+		glm::vec3 _gridOrigin;
 		float _tileSize;
 		float _tileSpacing;
-		glm::vec3 _gridOrigin;
+		float _degrees;
 
 		void CreateGridData(Vertex vertexData[]);
 	};
