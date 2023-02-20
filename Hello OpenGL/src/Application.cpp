@@ -22,6 +22,9 @@
 
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
+#include "tests/TestTiles2D.h"
+
+const unsigned int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
 
 int main(void)
 {
@@ -36,7 +39,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello OpenGL", NULL, NULL);
+    window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello OpenGL", NULL, NULL);
     if (!window) {
         glfwTerminate();
         return -1;
@@ -70,6 +73,7 @@ int main(void)
 
         testMenu->RegisterTest<test::TestClearColor>("Clear Color");
         testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
+        testMenu->RegisterTest<test::TestTiles2D>("2D Tiles");
 
         while (!glfwWindowShouldClose(window)) {
             GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));

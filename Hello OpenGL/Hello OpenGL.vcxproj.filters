@@ -63,6 +63,12 @@
     <ClCompile Include="src\tests\TestTexture2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tests\TestTiles2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render util\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
@@ -474,6 +480,7 @@
     <None Include="src\vendor\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="res\shaders\Tile.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\render util\Renderer.h">
@@ -1374,6 +1381,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\tests\TestTexture2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\TestTiles2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render util\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
