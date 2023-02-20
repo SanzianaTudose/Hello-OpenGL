@@ -30,8 +30,8 @@ private:
 	int _width = 0, _height = 0;							// width and height of the window
 
 	float speed = 0.1f;										// current speed of the camera
-	const float fast_speed = 0.4f;							// speed of the camra while holding shift
-	const float regular_speed = 0.1f;						// speed of the camera while not holding shift
+	const float fast_speed = 0.1f;							// speed of the camra while holding shift
+	const float regular_speed = 0.005f;						// speed of the camera while not holding shift
 	float sensitivity = 0.1f;								// sensitivity of the camera rotation
 
 	// yaw and pitch are used to determine the camera orientation

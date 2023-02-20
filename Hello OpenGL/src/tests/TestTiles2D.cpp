@@ -30,8 +30,8 @@ namespace test
     TestTiles2D::TestTiles2D() :
           _proj(glm::perspective(90.0f, WINDOW_WIDTH / WINDOW_HEIGHT, 0.1f, 100.0f)),
           _view(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f))),
-          _gridSize(3), _gridOrigin(glm::vec3(0.0f, 0.0f, 5.0f)),
-          _tileSize(10.0f), _tileSpacing(10.0f)
+          _gridSize(7), _gridOrigin(glm::vec3(0.0f, 0.0f, 0.0f)),
+          _tileSize(0.5f), _tileSpacing(0.3f)
     {
         // Enable alpha blending and specify behavior
         GLCall(glEnable(GL_BLEND));
@@ -124,24 +124,96 @@ namespace test
 	void TestTiles2D::OnRender() {
         Renderer renderer;
 
-        // Batch draw grid
-        {
-            glm::mat4 model(1.0f); // Model Matrix = model transform (Translation/Rotation/Scale)
-            model = glm::scale(model, glm::vec3(0.1f, 0.1f, -1.0f)); // not sure yet why this is necessary
-            model = glm::rotate(model, glm::radians(_degrees), glm::vec3(0.0f, 1.0f, 0.0f));
-            glm::mat4 mvp = _proj * _view * model;
-            _shader->Bind();
-            _shader->SetUniformMat4f("u_MVP", mvp);
+        float transAmount = _gridSize * (_tileSize + _tileSpacing);
+        float transHalf = _tileSpacing / 2.0f;
 
-            _camera->Matrix(70.0f, 0.1f, 100.0f, _shader, "u_MVP");
+        // Batch draw grid wall #1 (Front)
+        {
+            _shader->Bind();
+
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(transHalf, transHalf, 0.0f));
+
+            _camera->Matrix(70.0f, 0.1f, 100.0f, _shader, "u_MVP", model);
             _camera->Inputs(glfwGetCurrentContext());
 
             renderer.Draw(*_VAO, *_IBO, *_shader);
         }
+
+        // Batch draw grid wall #2 (Back)
+        {
+            _shader->Bind();
+
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(0.0f, transHalf, transAmount));
+
+            _camera->Matrix(70.0f, 0.1f, 100.0f, _shader, "u_MVP", model);
+            _camera->Inputs(glfwGetCurrentContext());
+
+            renderer.Draw(*_VAO, *_IBO, *_shader);
+        }
+
+        // Batch draw grid wall #3 (Left)
+        {
+            _shader->Bind();
+
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = glm::translate(model, glm::vec3(0.0f, 0.0f, -transAmount));
+
+            _camera->Matrix(70.0f, 0.1f, 100.0f, _shader, "u_MVP", model);
+            _camera->Inputs(glfwGetCurrentContext());
+
+            renderer.Draw(*_VAO, *_IBO, *_shader);
+        }
+
+        // Batch draw grid wall #3 (Right)
+        {
+            _shader->Bind();
+
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = glm::translate(model, glm::vec3(transHalf, transHalf, 0.0f));
+
+            _camera->Matrix(70.0f, 0.1f, 100.0f, _shader, "u_MVP", model);
+            _camera->Inputs(glfwGetCurrentContext());
+
+            renderer.Draw(*_VAO, *_IBO, *_shader);
+        }
+
+        // Batch draw grid wall #5 (Floor)
+        {
+            _shader->Bind();
+
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            model = glm::translate(model, glm::vec3(0.0f, transHalf, 0.0f));
+
+            _camera->Matrix(70.0f, 0.1f, 100.0f, _shader, "u_MVP", model);
+            _camera->Inputs(glfwGetCurrentContext());
+
+            renderer.Draw(*_VAO, *_IBO, *_shader);
+        }
+
+        // Batch draw grid wall #6 (Ceiling)
+        {
+            _shader->Bind();
+
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            model = glm::translate(model, glm::vec3(0.0f, 0.0f, -transAmount));
+
+            _camera->Matrix(70.0f, 0.1f, 100.0f, _shader, "u_MVP", model);
+            _camera->Inputs(glfwGetCurrentContext());
+
+            renderer.Draw(*_VAO, *_IBO, *_shader);
+        }
+
+        
 	}
 
 	void TestTiles2D::OnImGuiRender() {
-        ImGui::SliderFloat3("Grid Translate", &_gridOrigin.x, -1.0f, 300.0f);
+        /*ImGui::SliderFloat3("Grid Translate", &_gridOrigin.x, -1.0f, 300.0f);
         ImGui::SliderFloat("Z", &_gridOrigin.z, -10.0f, 15.0f);
         ImGui::SliderFloat("Rotation", &_degrees, -1.0f, 1.0f);
         ImGui::SliderInt("Grid Size", &_gridSize, 0, 10);
@@ -150,5 +222,6 @@ namespace test
         ImGui::SliderFloat("Tile Spacing", &_tileSpacing, 0.0f, 30.0f);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        */
     }
 }
